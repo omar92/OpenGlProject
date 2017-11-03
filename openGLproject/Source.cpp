@@ -59,7 +59,8 @@ void onStart(WindowHandler & uim)
 	activeCamera->set_fov(50);
 	activeCamera->lookAt(glm::vec3(0, 0, 0));
 	mesh = Mesh::create_cube(shader);
-	mesh2 = Mesh::create_sphere(shader,5);
+	//mesh2 = Mesh::create_sphere(shader,5);
+	mesh2 = Mesh::create_cube(shader);
 	mesh.translate(0, 0, 0);
 }
 
