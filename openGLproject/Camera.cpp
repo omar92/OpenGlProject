@@ -30,7 +30,7 @@ void Camera::Init(PROJECTION_TYPE _projection_type, float _aspect_ratio) {
 	look = glm::vec3(0, 0, -1);
 
 	z_near = 1.0f;
-	z_far = 10.0f;
+	z_far = 30.0f;
 	aspect_ratio = _aspect_ratio;
 
 	fov = 60.0f;

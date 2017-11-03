@@ -118,7 +118,8 @@ Mesh Mesh::create_cube(std::shared_ptr<Shader> _shader) {
 	auto vertices = std::shared_ptr<std::vector<vertex>>(new std::vector<vertex>());
 	auto indices = std::shared_ptr<std::vector<GLuint>>(new std::vector<GLuint>());
 
-	glm::vec3 cubeP[8] = {
+	glm::vec3 cubeP[8] = 
+	{
 		glm::vec3(-0.5f,0.5f,0.5f),
 		glm::vec3(-0.5f,-0.5f,0.5f),
 		glm::vec3(0.5f,-0.5f,0.5f),

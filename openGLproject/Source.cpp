@@ -22,6 +22,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Camera.h"
+#include <vector>
 
 #define  SCREEN_WIDTH 500//1366	
 #define  SCREEN_Height 500//768
@@ -36,9 +37,89 @@ std::shared_ptr<Shader> shader;
 std::shared_ptr<std::vector<vertex>> coreVertices;
 std::shared_ptr<std::vector<GLuint>> cubeindices;
 Camera* activeCamera;
-Mesh mesh;
-Mesh mesh2;
+//Mesh mesh;
+//Mesh mesh2;
 float theta = 0;
+char **level;
+std::vector<std::vector<Mesh>> meshVectorBig;
+int rows, cols;
+int playerPosX, playerPosZ;
+void loadLevel()
+{
+	std::ifstream loadLvl;
+	loadLvl.open("myLevel.txt");
+	loadLvl >> cols >> rows;
+	level = (char**)malloc(sizeof(char*)*cols);
+	for (int i = 0; i < cols; i++)
+		level[i] = (char*)malloc(sizeof(char)*rows);
+
+	for (int i = 0; i<cols; i++)
+	{
+		for (int j = 0; j<rows; j++)
+		{
+			level[i][j] = loadLvl.get();
+		}
+	}
+	loadLvl.close();
+}
+
+void drawLevel()
+{
+	int x = 0;
+	for (int i = 0; i < cols; i++)
+	{
+		std::vector<Mesh> meshVectorSmall;
+		for (int j = 0; j<rows; j++)
+		{
+			Mesh myMesh;
+			myMesh = Mesh::create_cube(shader);
+
+			if (level[i][j] == '$')
+			{
+				myMesh.translate(i, 0, j);
+				meshVectorSmall.push_back(myMesh);
+			}
+			else if (level[i][j] == '#')
+			{
+				myMesh.translate(i, 3, j);
+				meshVectorSmall.push_back(myMesh);
+			}
+			else
+			{
+				myMesh.translate(i, 0, j);
+				meshVectorSmall.push_back(myMesh);
+				if (level[i][j] == '@')
+				{
+					playerPosX = i;
+					playerPosZ = j;
+				}
+			}
+		}
+		meshVectorBig.push_back(meshVectorSmall);
+	}
+}
+
+void renderLevel()
+{
+	for (int i = 0; i < cols; i++)
+	{
+		for (int j = 0; j<rows; j++)
+		{
+			meshVectorBig[i][j].render(activeCamera);
+		}
+	}
+}
+
+void rotateLevel()
+{
+	for (int i = 0; i < cols; i++)
+	{
+		for (int j = 0; j<rows; j++)
+		{
+			meshVectorBig[i][j].rotate(theta, glm::vec3(0, 1, 0));
+		}
+	}
+}
 
 int main()
 {
@@ -55,26 +136,31 @@ int main()
 void onStart(WindowHandler & uim)
 {
 	activeCamera = new Camera(PROJECTION_TYPE::PERSPECTIVE, glm::vec2(SCREEN_WIDTH, SCREEN_Height));
-	activeCamera->set_position(glm::vec3(0, 1, 5));
-	activeCamera->set_fov(50);
+	activeCamera->set_position(glm::vec3(10, 6, 12));
+	activeCamera->set_fov(60);
 	activeCamera->lookAt(glm::vec3(0, 0, 0));
-	mesh = Mesh::create_cube(shader);
-	//mesh2 = Mesh::create_sphere(shader,5);
-	mesh2 = Mesh::create_sphere(shader, 5);
-	mesh.translate(0, 0, 0);
+	//mesh = Mesh::create_cube(shader);
+	//mesh2 = Mesh::create_cube(shader);
+	//mesh.translate(2, 0, 0);
+	loadLevel();
+	drawLevel();
 }
 
 void onUpdate(WindowHandler & uim)
 {
-	theta += 0.001f;
-	mesh.rotate(theta, glm::vec3(0, 1, 0));
-	mesh2.rotate(-theta, glm::vec3(0, 1, 0));
+	//theta += 0.001f;
+	rotateLevel();
+	//mesh.rotate(theta, glm::vec3(0, 1, 0));
+	//mesh2.rotate(-theta, glm::vec3(0, 1, 0));
 }
 
 void onRender(WindowHandler & uim)
-{	mesh.render(activeCamera);
-	mesh2.render(activeCamera);
+{
+	renderLevel();
+	//mesh.render(activeCamera);
+	//mesh2.render(activeCamera);
 }
+
 
 
 void onHover(sf::Vector2i cPos)
