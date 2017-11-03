@@ -39,11 +39,14 @@ std::shared_ptr<std::vector<GLuint>> cubeindices;
 Camera* activeCamera;
 //Mesh mesh;
 //Mesh mesh2;
+Mesh Player;
 float theta = 0;
 char **level;
 std::vector<std::vector<Mesh>> meshVectorBig;
 int rows, cols;
 int playerPosX, playerPosZ;
+int playerPosY = 4;
+
 void loadLevel()
 {
 	std::ifstream loadLvl;
@@ -62,7 +65,6 @@ void loadLevel()
 	}
 	loadLvl.close();
 }
-
 void drawLevel()
 {
 	int x = 0;
@@ -76,7 +78,7 @@ void drawLevel()
 
 			if (level[i][j] == '$')
 			{
-				myMesh.translate(i, 0, j);
+				myMesh.translate(i, 1, j);
 				meshVectorSmall.push_back(myMesh);
 			}
 			else if (level[i][j] == '#')
@@ -98,7 +100,6 @@ void drawLevel()
 		meshVectorBig.push_back(meshVectorSmall);
 	}
 }
-
 void renderLevel()
 {
 	for (int i = 0; i < cols; i++)
@@ -109,7 +110,6 @@ void renderLevel()
 		}
 	}
 }
-
 void rotateLevel()
 {
 	for (int i = 0; i < cols; i++)
@@ -119,6 +119,107 @@ void rotateLevel()
 			meshVectorBig[i][j].rotate(theta, glm::vec3(0, 1, 0));
 		}
 	}
+}
+
+void MovePlayerDown()
+{
+	int blocked = 0;
+	while (playerPosZ < rows-1 && !blocked)
+	{
+		if (level[playerPosX][playerPosZ] != '#')
+		{
+			playerPosZ++;
+		}
+		else
+		{
+			blocked = 1;
+			playerPosZ--;
+		}
+	}
+	if (level[playerPosX][playerPosZ] == '#')
+	{
+		playerPosZ--;
+	}
+	if (level[playerPosX][playerPosZ] == '$')
+	{
+		std::cout << "Gratz you Won";
+	}
+	Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+}
+void MovePlayerUp()
+{
+	int blocked = 0;
+	while (playerPosZ > 0 && !blocked)
+	{
+		if (level[playerPosX][playerPosZ] != '#')
+		{
+			playerPosZ--;
+		}
+		else
+		{
+			blocked = 1;
+			playerPosZ++;
+		}
+	}
+	if (level[playerPosX][playerPosZ] == '#')
+	{
+		playerPosZ++;
+	}
+	if (level[playerPosX][playerPosZ] == '$')
+	{
+		std::cout << "Gratz you Won";
+	}
+	Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+}
+void MovePlayerRight()
+{
+	int blocked = 0;
+	while (playerPosX < cols-1 && !blocked)
+	{
+		if (level[playerPosX][playerPosZ] != '#')
+		{
+			playerPosX++;
+		}
+		else
+		{
+			blocked = 1;
+			playerPosX--;
+		}
+	}
+	if (level[playerPosX][playerPosZ] == '#')
+	{
+		playerPosX--;
+	}
+	if (level[playerPosX][playerPosZ] == '$')
+	{
+		std::cout << "Gratz you Won";
+	}
+	Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+}
+void MovePlayerLeft()
+{
+	int blocked = 0;
+	while (playerPosX > 0 && !blocked)
+	{
+		if (level[playerPosX][playerPosZ] != '#')
+		{
+			playerPosX--;
+		}
+		else
+		{
+			blocked = 1;
+			playerPosX++;
+		}
+	}
+	if (level[playerPosX][playerPosZ] == '#')
+	{
+		playerPosX++;
+	}
+	if (level[playerPosX][playerPosZ] == '$')
+	{
+		std::cout << "Gratz you Won";
+	}
+	Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
 }
 
 int main()
@@ -144,12 +245,26 @@ void onStart(WindowHandler & uim)
 	//mesh.translate(2, 0, 0);
 	loadLevel();
 	drawLevel();
+	Player = Mesh::create_cube(shader);
+	Player.translate(playerPosX, playerPosY, playerPosZ);
+
+	/*
+	MovePlayerDown();
+	MovePlayerRight();
+	MovePlayerDown();
+	MovePlayerRight();
+	MovePlayerUp();
+	MovePlayerLeft();
+	*/
+
+	std::cout << "\n" << playerPosX << " " << playerPosZ;
 }
 
 void onUpdate(WindowHandler & uim)
 {
 	//theta += 0.001f;
 	rotateLevel();
+	Player.rotate(theta, glm::vec3(0, 1, 0));
 	//mesh.rotate(theta, glm::vec3(0, 1, 0));
 	//mesh2.rotate(-theta, glm::vec3(0, 1, 0));
 }
@@ -157,11 +272,10 @@ void onUpdate(WindowHandler & uim)
 void onRender(WindowHandler & uim)
 {
 	renderLevel();
+	Player.render(activeCamera);
 	//mesh.render(activeCamera);
 	//mesh2.render(activeCamera);
 }
-
-
 
 void onHover(sf::Vector2i cPos)
 {
@@ -169,8 +283,8 @@ void onHover(sf::Vector2i cPos)
 	activeCamera->lookAt(glm::vec3(p.x, p.y, 0.0f));
 }
 
-
-glm::vec2 convertMousePos(glm::vec2 pos) {
+glm::vec2 convertMousePos(glm::vec2 pos) 
+{
 	//printf("\n(%f,%f):\t", pos.x, pos.y);
 	pos.x = -1 + ((pos.x * 2) / SCREEN_WIDTH);
 	pos.y = 1 - ((pos.y * 2) / SCREEN_Height);
