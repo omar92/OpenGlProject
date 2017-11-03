@@ -59,19 +59,19 @@ void onStart(WindowHandler & uim)
 	activeCamera->set_fov(50);
 	activeCamera->lookAt(glm::vec3(0, 0, 0));
 	mesh = Mesh::create_cube(shader);
-	mesh2 = Mesh::create_cube(shader);
+	mesh2 = Mesh::create_sphere(shader,5);
 	mesh.translate(0, 0, 0);
 }
 
 void onUpdate(WindowHandler & uim)
 {
 	theta += 0.001f;
+	//	mesh.rotate(theta, glm::vec3(0, 1, 0));
+	mesh2.rotate(-theta, glm::vec3(0, 1, 0));
 }
 
 void onRender(WindowHandler & uim)
 {
-//	mesh.rotate(theta, glm::vec3(0, 1, 0));
-	mesh2.rotate(-theta, glm::vec3(0, 1, 0));
 //	mesh.render(activeCamera);
 	mesh2.render(activeCamera);
 }
