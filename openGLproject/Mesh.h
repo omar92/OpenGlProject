@@ -84,7 +84,5 @@ public:
 	{
 		return rotation;
 	}
-
-
 };
 
