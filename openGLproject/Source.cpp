@@ -67,13 +67,12 @@ void onStart(WindowHandler & uim)
 void onUpdate(WindowHandler & uim)
 {
 	theta += 0.001f;
-	//mesh.rotate(theta, glm::vec3(0, 1, 0));
+	mesh.rotate(theta, glm::vec3(0, 1, 0));
 	mesh2.rotate(-theta, glm::vec3(0, 1, 0));
 }
 
 void onRender(WindowHandler & uim)
-{
-	//mesh.render(activeCamera);
+{	mesh.render(activeCamera);
 	mesh2.render(activeCamera);
 }
 
