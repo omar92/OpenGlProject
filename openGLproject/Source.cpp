@@ -32,6 +32,8 @@ void onHover(sf::Vector2i cPos);
 void onStart(WindowHandler &uim);
 void onUpdate(WindowHandler &uim);
 void onRender(WindowHandler &uim);
+void onEvent(WindowHandler &uim, sf::Event ev);
+
 glm::vec2 convertMousePos(glm::vec2 pos);
 std::shared_ptr<Shader> shader;
 std::shared_ptr<std::vector<vertex>> coreVertices;
@@ -229,6 +231,7 @@ int main()
 	window->onUpdate = onUpdate;
 	window->onHover = onHover;
 	window->onRender = onRender;
+	window->onEvent = onEvent;
 	shader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl");
 	//shader->use();
 	window->startDisplay();
@@ -282,6 +285,38 @@ void onHover(sf::Vector2i cPos)
 {
 	auto p = convertMousePos(glm::vec2(cPos.x, cPos.y));
 	activeCamera->lookAt(glm::vec3(p.x, p.y, 0.0f));
+}
+
+void onEvent(WindowHandler &uim, sf::Event ev)
+{
+	switch (ev.type)
+	{
+	case sf::Event::EventType::KeyPressed:
+		switch (ev.key.code)
+		{
+		case sf::Keyboard::W:
+			MovePlayerUp();
+			break;
+		case sf::Keyboard::S:
+			MovePlayerDown();
+			break;
+		case sf::Keyboard::D:
+			MovePlayerRight();
+			break;
+		case sf::Keyboard::A:
+			MovePlayerLeft();
+			break;
+		case sf::Keyboard::Delete:
+
+			break;
+		default:
+			break;
+		}
+
+		break;
+	default:
+		break;
+	}
 }
 
 glm::vec2 convertMousePos(glm::vec2 pos) 
