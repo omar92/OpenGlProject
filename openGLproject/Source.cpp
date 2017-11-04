@@ -24,8 +24,8 @@
 #include "Camera.h"
 #include <vector>
 
-#define  SCREEN_WIDTH 500//1366	
-#define  SCREEN_Height 500//768
+#define  SCREEN_WIDTH 1920//1366	
+#define  SCREEN_Height 1080//768
 
 
 void onHover(sf::Vector2i cPos);
@@ -45,7 +45,7 @@ char **level;
 std::vector<std::vector<Mesh>> meshVectorBig;
 int rows, cols;
 int playerPosX, playerPosZ;
-int playerPosY = 4;
+int playerPosY = 1;
 
 void loadLevel()
 {
@@ -75,20 +75,23 @@ void drawLevel()
 		{
 			Mesh myMesh;
 			myMesh = Mesh::create_cube(shader);
-			myMesh.setColor(glm::vec3((float)i/ cols,.2, (float)j/ rows));
 			if (level[i][j] == '$')
 			{
-				myMesh.translate(i, 1, j);
+				myMesh.translate(i, 0, j);
+				myMesh.setColor(glm::vec3(1,1,0));
 				meshVectorSmall.push_back(myMesh);
+				
 			}
 			else if (level[i][j] == '#')
 			{
-				myMesh.translate(i, 3, j);
+				myMesh.translate(i, 1, j);
+				myMesh.setColor(glm::vec3(1, 0, 0));
 				meshVectorSmall.push_back(myMesh);
 			}
 			else
 			{
 				myMesh.translate(i, 0, j);
+				myMesh.setColor(glm::vec3(0, 0, 1));
 				meshVectorSmall.push_back(myMesh);
 				if (level[i][j] == '@')
 				{
@@ -237,22 +240,22 @@ int main()
 void onStart(WindowHandler & uim)
 {
 	activeCamera = new Camera(PROJECTION_TYPE::PERSPECTIVE, glm::vec2(SCREEN_WIDTH, SCREEN_Height));
-	activeCamera->set_position(glm::vec3(10, 6, 12));
+	activeCamera->set_position(glm::vec3(5, 6, 13));
 	activeCamera->set_fov(60);
-	activeCamera->lookAt(glm::vec3(0, 0, 0));
+	activeCamera->lookAt(glm::vec3(0, 0, 10));
 	//mesh = Mesh::create_cube(shader);
 	//mesh2 = Mesh::create_cube(shader);
 	//mesh.translate(2, 0, 0);
 	loadLevel();
 	drawLevel();
 	Player = Mesh::create_cube(shader);
-	Player.setColor(glm::vec3(0, 1, 0));
+	Player.setColor(glm::vec3(1, 0, 1));
 	Player.translate(playerPosX, playerPosY, playerPosZ);
 
-	/*
+	
 	MovePlayerDown();
 	MovePlayerRight();
-	MovePlayerDown();
+	/*MovePlayerDown();
 	MovePlayerRight();
 	MovePlayerUp();
 	MovePlayerLeft();
@@ -266,6 +269,7 @@ void onUpdate(WindowHandler & uim)
 	//theta += 0.001f;
 //	rotateLevel();
 	Player.rotate(theta, glm::vec3(0, 1, 0));
+	activeCamera->lookAt(Player.get_position());
 	//mesh.rotate(theta, glm::vec3(0, 1, 0));
 	//mesh2.rotate(-theta, glm::vec3(0, 1, 0));
 }
@@ -277,6 +281,8 @@ void onRender(WindowHandler & uim)
 	//mesh.render(activeCamera);
 	//mesh2.render(activeCamera);
 }
+
+
 
 void onHover(sf::Vector2i cPos)
 {
