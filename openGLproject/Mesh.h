@@ -24,6 +24,8 @@ private:
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::vec4 rotation;
+	
+	glm::vec3 color;
 
 	glm::mat4x4 model_mat;
 
@@ -57,6 +59,12 @@ public:
 		position = _position;
 		is_mode_mat_dirty = true;
 	}
+
+	void setColor(glm::vec3 _material_color)
+	{
+		color = _material_color;
+	}
+
 	glm::vec3 get_position() const
 	{
 		return position;

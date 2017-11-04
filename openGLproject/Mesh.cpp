@@ -14,6 +14,8 @@ Mesh::Mesh(std::shared_ptr<std::vector<vertex>> vertices, std::shared_ptr<std::v
 	rotation = glm::vec4(0, 0, 0, 0);
 	is_mode_mat_dirty = true;
 
+	color = glm::vec3(0, 0, 0);
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex)*vertices->size(), vertices->data(), GL_STATIC_DRAW);
@@ -47,12 +49,16 @@ void Mesh::render(glm::mat4 view_mat, glm::mat4 proj_mat, glm::vec3 cam_pos)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
+	GLuint material_color_location = shader->get_uniform_loc("material_color");
+	glUniform3f (material_color_location,color.x,color.y,color.z);
+
 	GLuint vertex_position_location = shader->get_attr_loc("vertex_position");
 	glVertexAttribPointer(vertex_position_location, 3, GL_FLOAT, false, 6 * sizeof(float), 0);
 	glEnableVertexAttribArray(vertex_position_location);
 	GLuint vertex_normal_location = shader->get_attr_loc("vertex_normal");
 	glVertexAttribPointer(vertex_normal_location, 3, GL_FLOAT, false, 6 * sizeof(float), (char*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(vertex_normal_location);
+
 
 	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, NULL);
 	unBindBuffers();

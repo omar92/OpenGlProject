@@ -12,8 +12,8 @@ float kd=0.8;
 float ks=5;
 float shineness=130;
 vec3 lightDir=vec3(3.0,3.0,3.0);
-vec3 material_color=vec3(1,1,1);
-vec3 light_color=vec3(0.5,0.8,0.1);
+uniform vec3 material_color=vec3(1,1,1);
+vec3 light_color=vec3(1,1,1);
 vec3 camPos=vec3(0,0,3);
 
 out vec3 color;

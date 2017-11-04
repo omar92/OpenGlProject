@@ -75,7 +75,7 @@ void drawLevel()
 		{
 			Mesh myMesh;
 			myMesh = Mesh::create_cube(shader);
-
+			myMesh.setColor(glm::vec3((float)i/ cols,.2, (float)j/ rows));
 			if (level[i][j] == '$')
 			{
 				myMesh.translate(i, 1, j);
@@ -246,6 +246,7 @@ void onStart(WindowHandler & uim)
 	loadLevel();
 	drawLevel();
 	Player = Mesh::create_cube(shader);
+	Player.setColor(glm::vec3(0, 1, 0));
 	Player.translate(playerPosX, playerPosY, playerPosZ);
 
 	/*
