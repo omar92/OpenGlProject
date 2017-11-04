@@ -26,7 +26,7 @@ public:
 	void(*onRender)(WindowHandler &uim);
 	void(*onClose)(WindowHandler &uim);
 	void(*onEvent)(WindowHandler &uim, sf::Event ev);
-
+	void close();
 	static std::shared_ptr<WindowHandler> createWindow(sf::Vector2i size, sf::Vector3f bgColor = sf::Vector3f(.5, .5, .5));
 	~WindowHandler();
 	void startDisplay();
@@ -34,11 +34,11 @@ private:
 	static bool isGLEWInitialised;
 
 	WindowHandler(sf::Window&);
-	void start();
-	void update();
-	void render();
-	void close();
-
+	void _start();
+	void _update();
+	void _render();
+	void _close();
+	
 	bool isOpen();
 	void pullInputs();
 	void clear();

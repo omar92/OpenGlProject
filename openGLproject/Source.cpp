@@ -312,8 +312,8 @@ void onEvent(WindowHandler &uim, sf::Event ev)
 		case sf::Keyboard::A:
 			MovePlayerLeft();
 			break;
-		case sf::Keyboard::Delete:
-
+		case sf::Keyboard::Escape:
+			win.close();
 			break;
 		default:
 			break;
