@@ -110,16 +110,16 @@ void renderLevel()
 		}
 	}
 }
-void rotateLevel()
-{
-	for (int i = 0; i < cols; i++)
-	{
-		for (int j = 0; j<rows; j++)
-		{
-			meshVectorBig[i][j].rotate(theta, glm::vec3(0, 1, 0));
-		}
-	}
-}
+//void rotateLevel()
+//{
+//	for (int i = 0; i < cols; i++)
+//	{
+//		for (int j = 0; j<rows; j++)
+//		{
+//			meshVectorBig[i][j].translate(0,0,0);
+//		}
+//	}
+//}
 
 void MovePlayerDown()
 {
@@ -263,7 +263,7 @@ void onStart(WindowHandler & uim)
 void onUpdate(WindowHandler & uim)
 {
 	//theta += 0.001f;
-	rotateLevel();
+//	rotateLevel();
 	Player.rotate(theta, glm::vec3(0, 1, 0));
 	//mesh.rotate(theta, glm::vec3(0, 1, 0));
 	//mesh2.rotate(-theta, glm::vec3(0, 1, 0));

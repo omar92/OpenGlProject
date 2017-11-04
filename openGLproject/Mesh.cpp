@@ -40,6 +40,8 @@ void Mesh::render(glm::mat4 view_mat, glm::mat4 proj_mat, glm::vec3 cam_pos)
 		update_model_mat();
 		is_mode_mat_dirty = false;
 	}
+	glUniformMatrix4fv(shader->get_uniform_loc("modelMat"), 1, GL_FALSE, glm::value_ptr(model_mat));
+
 	//draw
 	shader->use();
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -73,8 +75,6 @@ void Mesh::update_model_mat()
 		model_mat = glm::translate(position)*
 			glm::scale(scale);
 	}
-
-	glUniformMatrix4fv(shader->get_uniform_loc("modelMat"), 1, GL_FALSE, glm::value_ptr(model_mat));
 }
 
 void Mesh::unBindBuffers()
