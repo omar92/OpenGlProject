@@ -35,7 +35,9 @@ void onRender(WindowHandler &uim);
 void onEvent(WindowHandler &uim, sf::Event ev);
 
 glm::vec2 convertMousePos(glm::vec2 pos);
-std::shared_ptr<Shader> shader;
+std::shared_ptr<Shader> playerShader;
+std::shared_ptr<Shader> blockShader;
+std::shared_ptr<Shader> goalShader;
 std::shared_ptr<std::vector<vertex>> coreVertices;
 std::shared_ptr<std::vector<GLuint>> cubeindices;
 Camera* activeCamera;
@@ -85,10 +87,9 @@ void drawLevel()
 		std::vector<Mesh> meshVectorSmall;
 		for (int j = 0; j<rows; j++)
 		{
-			Mesh myMesh;
-			myMesh = Mesh::create_cube(shader);
 			if (level[i][j] == '$')
 			{
+				Mesh myMesh = Mesh::create_cube(blockShader);
 				myMesh.translate(i, 0, j);
 				myMesh.setColor(glm::vec3(1,1,0));
 				meshVectorSmall.push_back(myMesh);
@@ -96,12 +97,14 @@ void drawLevel()
 			}
 			else if (level[i][j] == '#')
 			{
+				Mesh myMesh = Mesh::create_cube(blockShader);
 				myMesh.translate(i, 1, j);
 				myMesh.setColor(glm::vec3(1, 0, 0));
 				meshVectorSmall.push_back(myMesh);
 			}
 			else
 			{
+				Mesh myMesh = Mesh::create_cube(blockShader);
 				myMesh.translate(i, 0, j);
 				myMesh.setColor(glm::vec3(0.5, 0.6, 1));
 				meshVectorSmall.push_back(myMesh);
@@ -317,7 +320,9 @@ int main()
 	window->onHover = onHover;
 	window->onRender = onRender;
 	window->onEvent = onEvent;
-	shader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl", "./res/block.png");
+	blockShader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl", "./res/block.png");
+	playerShader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl", "./res/player.png");
+	goalShader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl", "./res/block.png");
 	//shader->use();
 	window->startDisplay();
 }	
@@ -333,8 +338,8 @@ void onStart(WindowHandler & uim)
 	//mesh.translate(2, 0, 0);
 	loadLevel("mylevel.txt");
 	drawLevel();
-	Player = Mesh::create_cube(shader);
-	Player.setColor(glm::vec3(0, 1, 0));
+	Player = Mesh::create_cube(playerShader);
+	Player.setColor(glm::vec3(1, 1, 1));
 	Player.translate(playerPosX, playerPosY, playerPosZ);
 
 	/*

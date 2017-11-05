@@ -23,6 +23,7 @@ private:
 	//GLuint vertex_Shader_id;
 	//GLuint fragment_Shader_id;
 	GLuint Shader_program_id;
+	GLuint textureID;
 public:
 	Shader(GLuint shaderProgramID);
 	static std::shared_ptr<Shader> LoadFromFile(const char *  vertex_Shader_filename, const char *  fragment_Shader_filename, const char * texture_file_name="");
@@ -31,6 +32,7 @@ public:
 	void use() const
 	{
 		glUseProgram(Shader_program_id);
+		glBindTexture(GL_TEXTURE_2D, textureID);
 	}
 	GLuint getProgramID()const { return Shader_program_id; }
 	~Shader();

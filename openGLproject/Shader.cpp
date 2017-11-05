@@ -83,26 +83,6 @@ GLuint Shader::InitShader(const char * vertex_shader_file_name, const char * fra
 		printf("\makeShaderProgram Faild :\n");
 	}
 
-
-	sf::Image image;
-	if (!image.loadFromFile(texture_file_name))
-	{
-		std::cout << "error loading image!" << std::endl;
-		if (!image.loadFromFile("defult.png"))
-		{
-			std::cout << "error loading image!" << std::endl;
-		}
-	}
-
-	GLuint textureID;
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
 	glEnable(GL_DEPTH_TEST);
 
 	return shaderProgramID;
@@ -136,6 +116,26 @@ std::shared_ptr<Shader> Shader::LoadFromFile(const char * vertex_Shader_filename
 	GLuint Shader_program_id = InitShader(vertex_Shader_filename, fragment_Shader_filename, texture_file_name);
 	if (Shader_program_id != -1) {
 		std::shared_ptr<Shader> sPtr = std::shared_ptr<Shader>(new Shader(Shader_program_id));
+
+		sf::Image image;
+		if (!image.loadFromFile(texture_file_name))
+		{
+			std::cout << "error loading image!" << std::endl;
+			if (!image.loadFromFile("defult.png"))
+			{
+				std::cout << "error loading image!" << std::endl;
+			}
+		}
+		GLuint textureID;
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		sPtr->textureID = textureID;
 		return sPtr;
 	}
 	else {
