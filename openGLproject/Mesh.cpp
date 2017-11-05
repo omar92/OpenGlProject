@@ -112,24 +112,27 @@ void Mesh::CreateTriangle(glm::vec3 p[3], glm::vec3 normals[3], glm::vec2 uv[3],
 }
 
 void Mesh::CreateQuad(glm::vec3 p[4], std::vector<vertex>& vertices, std::vector<GLuint>& indices) {
-	glm::vec2 quadUv[] = {
-		glm::vec2(0,0), 
-		glm::vec2(0,1),
-		glm::vec2(1,0),
+	glm::vec2 quadUv1[] = {
+		glm::vec2(0,1), 
 		glm::vec2(0,0),
 		glm::vec2(1,0),
-		glm::vec2(1,1),
 	};
 	
 	glm::vec3 t1Points[] = { p[0],p[1],p[2] };
 	glm::vec3 normal = glm::cross((p[2] - p[1]), (p[0] - p[1]));
 	glm::vec3 t1Normals[] = { normal,normal,normal };
-	CreateTriangle(t1Points, t1Normals, quadUv, vertices, indices);
+	CreateTriangle(t1Points, t1Normals, quadUv1, vertices, indices);
+
+	glm::vec2 quadUv2[] = {
+		glm::vec2(0,1),
+		glm::vec2(1,0),
+		glm::vec2(1,1),
+	};
 
 	glm::vec3 t2Points[] = { p[0],p[2],p[3] };
 	normal = glm::cross((p[3] - p[2]), (p[0] - p[2]));
 	glm::vec3 t2Normals[] = { normal,normal,normal };
-	CreateTriangle(t2Points, t2Normals, quadUv, vertices, indices);
+	CreateTriangle(t2Points, t2Normals, quadUv2, vertices, indices);
 }
 
 Mesh Mesh::create_cube(std::shared_ptr<Shader> _shader) {
