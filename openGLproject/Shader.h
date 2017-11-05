@@ -25,7 +25,7 @@ private:
 	GLuint Shader_program_id;
 	GLuint textureID;
 public:
-	Shader(GLuint shaderProgramID);
+	Shader(GLuint shaderProgramID, GLuint _textureID);
 	static std::shared_ptr<Shader> LoadFromFile(const char *  vertex_Shader_filename, const char *  fragment_Shader_filename, const char * texture_file_name="");
 	GLuint get_uniform_loc(const std::string &uniform);
 	GLuint get_attr_loc(const std::string &Attrib);

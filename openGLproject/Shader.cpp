@@ -106,16 +106,16 @@ GLuint Shader::get_attr_loc(const std::string & Attrib)
 	return Attribs[Attrib];
 }
 
-Shader::Shader(GLuint shaderProgramID)
+Shader::Shader(GLuint shaderProgramID, GLuint _textureID)
 {
 	Shader_program_id = shaderProgramID;
+	textureID = _textureID;
 	//InitShader(vertex_Shader_filename, fragment_Shader_filename);
 }
 std::shared_ptr<Shader> Shader::LoadFromFile(const char * vertex_Shader_filename, const char * fragment_Shader_filename, const char * texture_file_name)
 {
 	GLuint Shader_program_id = InitShader(vertex_Shader_filename, fragment_Shader_filename, texture_file_name);
 	if (Shader_program_id != -1) {
-		std::shared_ptr<Shader> sPtr = std::shared_ptr<Shader>(new Shader(Shader_program_id));
 
 		sf::Image image;
 		if (!image.loadFromFile(texture_file_name))
@@ -134,8 +134,7 @@ std::shared_ptr<Shader> Shader::LoadFromFile(const char * vertex_Shader_filename
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-		sPtr->textureID = textureID;
+		std::shared_ptr<Shader> sPtr = std::shared_ptr<Shader>(new Shader(Shader_program_id, textureID));
 		return sPtr;
 	}
 	else {
