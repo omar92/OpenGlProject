@@ -50,6 +50,7 @@ int rows, cols;
 int playerPosX, playerPosZ;
 int playerPosY = 1;
 int TargetPosX, TargetPosZ;
+int Moving = 0;
 
 sf::Clock c;
 
@@ -102,7 +103,7 @@ void drawLevel()
 			else
 			{
 				myMesh.translate(i, 0, j);
-				myMesh.setColor(glm::vec3(0, 0, 1));
+				myMesh.setColor(glm::vec3(0.5, 0.6, 1));
 				meshVectorSmall.push_back(myMesh);
 				if (level[i][j] == '@')
 				{
@@ -139,6 +140,16 @@ void SwitchLevel()
 	}
 	else if (CurrentLevel == 1)
 	{
+		loadLevel("mylevel2.txt");
+		drawLevel();
+		//Player = Mesh::create_cube(shader);
+		//Player.setColor(glm::vec3(1, 0, 1));
+		Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+		//Player.translate(playerPosX, playerPosY, playerPosZ);
+		CurrentLevel++;
+	}
+	else if (CurrentLevel == 2)
+	{
 		loadLevel("mylevel.txt");
 		drawLevel();
 		//Player = Mesh::create_cube(shader);
@@ -146,7 +157,7 @@ void SwitchLevel()
 		Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
 		//Player.translate(playerPosX, playerPosY, playerPosZ);
 		CurrentLevel = 0;
-	}	
+	}
 }
 void MovePlayerDown()
 {
@@ -290,6 +301,12 @@ void MovePlayer()
 		//std::cout << "\n" << cp.x << " " << cp.y;
 		Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
 	}
+	if (playerPosX != TargetPosX || playerPosZ != TargetPosZ)
+	{
+		Moving = 1;
+	}
+	else
+		Moving = 0;
 }
 
 int main()
@@ -317,7 +334,7 @@ void onStart(WindowHandler & uim)
 	loadLevel("mylevel.txt");
 	drawLevel();
 	Player = Mesh::create_cube(shader);
-	Player.setColor(glm::vec3(1, 0, 1));
+	Player.setColor(glm::vec3(0, 1, 0));
 	Player.translate(playerPosX, playerPosY, playerPosZ);
 
 	/*
@@ -361,16 +378,20 @@ void onEvent(WindowHandler &win, sf::Event ev)
 		{
 		case sf::Keyboard::W:
 		case sf::Keyboard::Up:
-			MovePlayerUp();
+			if(!Moving)
+				MovePlayerUp();
 			break;
 		case sf::Keyboard::S:
-			MovePlayerDown();
+			if (!Moving)
+				MovePlayerDown();
 			break;
 		case sf::Keyboard::D:
-			MovePlayerRight();
+			if (!Moving)
+				MovePlayerRight();
 			break;
 		case sf::Keyboard::A:
-			MovePlayerLeft();
+			if (!Moving)
+				MovePlayerLeft();
 			break;
 		case sf::Keyboard::Escape:
 			win.close();
