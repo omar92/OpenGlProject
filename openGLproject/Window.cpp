@@ -17,7 +17,12 @@ bool WindowHandler::isOpen()
 	return window->isOpen();
 }
 
-std::shared_ptr<WindowHandler> WindowHandler::createWindow(sf::Vector2i size, sf::Vector3f bgColor) 
+void WindowHandler::close()
+{
+	window->close();
+}
+
+std::shared_ptr<WindowHandler> WindowHandler::createWindow(sf::Vector2i size, sf::Vector3f bgColor)
 {
 	//create sfml window
 	sf::ContextSettings context;
@@ -60,21 +65,21 @@ WindowHandler::~WindowHandler()
 
 void WindowHandler::startDisplay()
 {
-	start();
+	_start();
 	while (isOpen())
 	{
-		update();
-		render();
+		_update();
+		_render();
 	}
-	close();
+	_close();
 }
-void WindowHandler::start()
+void WindowHandler::_start()
 {
 
 
 	onStart(*this);
 }
-void WindowHandler::update()
+void WindowHandler::_update()
 {
 	pullInputs();
 	if (onUpdate != nullptr)
@@ -82,7 +87,7 @@ void WindowHandler::update()
 
 	//window.display();
 }
-void WindowHandler::render()
+void WindowHandler::_render()
 {
 	//glClearColor(1, 1, 0, 1);
 	//glClear(GL_COLOR_BUFFER_BIT);
@@ -100,7 +105,7 @@ void WindowHandler::render()
 
 	window->display();
 }
-void WindowHandler::close()
+void WindowHandler::_close()
 {
 	if (onClose != nullptr)
 		onClose(*this);
@@ -152,6 +157,7 @@ void WindowHandler::pullInputs()
 		case sf::Event::Closed:
 			window->close();
 			break;
+
 		default:
 			break;
 		}

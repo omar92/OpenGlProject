@@ -352,7 +352,7 @@ void onHover(sf::Vector2i cPos)
 	activeCamera->lookAt(glm::vec3(p.x, p.y, 0.0f));
 }
 
-void onEvent(WindowHandler &uim, sf::Event ev)
+void onEvent(WindowHandler &win, sf::Event ev)
 {
 	switch (ev.type)
 	{
@@ -372,8 +372,8 @@ void onEvent(WindowHandler &uim, sf::Event ev)
 		case sf::Keyboard::A:
 			MovePlayerLeft();
 			break;
-		case sf::Keyboard::Delete:
-
+		case sf::Keyboard::Escape:
+			win.close();
 			break;
 		default:
 			break;
