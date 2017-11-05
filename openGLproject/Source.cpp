@@ -44,15 +44,24 @@ Camera* activeCamera;
 Mesh Player;
 float theta = 0;
 char **level;
+int CurrentLevel = 0;
 std::vector<std::vector<Mesh>> meshVectorBig;
 int rows, cols;
 int playerPosX, playerPosZ;
 int playerPosY = 1;
+int TargetPosX, TargetPosZ;
 
-void loadLevel()
+sf::Clock c;
+
+glm::vec2 dir;
+glm::vec2 cp;
+
+void MovePlayer();
+
+void loadLevel(char* string)
 {
 	std::ifstream loadLvl;
-	loadLvl.open("myLevel.txt");
+	loadLvl.open(string);
 	loadLvl >> cols >> rows;
 	level = (char**)malloc(sizeof(char*)*cols);
 	for (int i = 0; i < cols; i++)
@@ -115,17 +124,30 @@ void renderLevel()
 		}
 	}
 }
-//void rotateLevel()
-//{
-//	for (int i = 0; i < cols; i++)
-//	{
-//		for (int j = 0; j<rows; j++)
-//		{
-//			meshVectorBig[i][j].translate(0,0,0);
-//		}
-//	}
-//}
-
+void SwitchLevel()
+{
+	meshVectorBig.clear();
+	if (CurrentLevel == 0)
+	{
+		loadLevel("mylevel1.txt");
+		drawLevel();
+		//Player = Mesh::create_cube(shader);
+		//Player.setColor(glm::vec3(1, 0, 1));
+		Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+		//Player.translate(playerPosX, playerPosY, playerPosZ);
+		CurrentLevel++;
+	}
+	else if (CurrentLevel == 1)
+	{
+		loadLevel("mylevel.txt");
+		drawLevel();
+		//Player = Mesh::create_cube(shader);
+		//Player.setColor(glm::vec3(1, 0, 1));
+		Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+		//Player.translate(playerPosX, playerPosY, playerPosZ);
+		CurrentLevel = 0;
+	}	
+}
 void MovePlayerDown()
 {
 	int blocked = 0;
@@ -147,11 +169,16 @@ void MovePlayerDown()
 	}
 	if (level[playerPosX][playerPosZ] == '$')
 	{
-		std::cout << "Gratz you Won";
+		SwitchLevel();
 	}
-	Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+	TargetPosX = playerPosX;
+	TargetPosZ = playerPosZ;
+	c.restart();
+
+	//Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
 }
 void MovePlayerUp()
+
 {
 	int blocked = 0;
 	while (playerPosZ > 0 && !blocked)
@@ -172,9 +199,14 @@ void MovePlayerUp()
 	}
 	if (level[playerPosX][playerPosZ] == '$')
 	{
-		std::cout << "Gratz you Won";
+		SwitchLevel();
 	}
-	Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+	TargetPosX = playerPosX;
+	TargetPosZ = playerPosZ;
+
+	c.restart();
+
+	//Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
 }
 void MovePlayerRight()
 {
@@ -197,13 +229,18 @@ void MovePlayerRight()
 	}
 	if (level[playerPosX][playerPosZ] == '$')
 	{
-		std::cout << "Gratz you Won";
+		SwitchLevel();
 	}
-	Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+	TargetPosX = playerPosX;
+	TargetPosZ = playerPosZ;
+	c.restart();
+
+	//Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
 }
 void MovePlayerLeft()
 {
 	int blocked = 0;
+	std::cout << "\n" << playerPosX;
 	while (playerPosX > 0 && !blocked)
 	{
 		if (level[playerPosX][playerPosZ] != '#')
@@ -222,9 +259,37 @@ void MovePlayerLeft()
 	}
 	if (level[playerPosX][playerPosZ] == '$')
 	{
-		std::cout << "Gratz you Won";
+		SwitchLevel();
 	}
-	Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+	TargetPosX = playerPosX;
+	TargetPosZ = playerPosZ;
+	c.restart();
+	//Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+}
+
+glm::vec2 linear(float t, glm::vec2 b, glm::vec2 c, float d)
+{
+	return c*t / d + b;
+}
+
+glm::vec2 easingOut(float t, glm::vec2 b, glm::vec2 c, float d)
+{
+	t /= d;
+	return -c*t*(t - 2) + b;
+}
+
+void MovePlayer()
+{
+	//if (c.getElapsedTime().asMilliseconds() < 2000.0)
+	{
+		dir = glm::vec2(TargetPosX - playerPosX, TargetPosZ - playerPosZ);
+		float time = c.getElapsedTime().asMilliseconds() / 1000.0;
+		cp = easingOut(time, cp, dir, 1);
+		playerPosX = cp.x;
+		playerPosZ = cp.y;
+		//std::cout << "\n" << cp.x << " " << cp.y;
+		Player.set_position(glm::vec3(playerPosX, playerPosY, playerPosZ));
+	}
 }
 
 int main()
@@ -249,32 +314,28 @@ void onStart(WindowHandler & uim)
 	//mesh = Mesh::create_cube(shader);
 	//mesh2 = Mesh::create_cube(shader);
 	//mesh.translate(2, 0, 0);
-	loadLevel();
+	loadLevel("mylevel.txt");
 	drawLevel();
 	Player = Mesh::create_cube(shader);
 	Player.setColor(glm::vec3(1, 0, 1));
 	Player.translate(playerPosX, playerPosY, playerPosZ);
 
-	
+	/*
 	MovePlayerDown();
 	MovePlayerRight();
-	/*MovePlayerDown();
+	MovePlayerDown();
 	MovePlayerRight();
 	MovePlayerUp();
 	MovePlayerLeft();
 	*/
 
-	std::cout << "\n" << playerPosX << " " << playerPosZ;
 }
 
 void onUpdate(WindowHandler & uim)
 {
-	//theta += 0.001f;
-//	rotateLevel();
-	Player.rotate(theta, glm::vec3(0, 1, 0));
+	//Player.rotate(theta, glm::vec3(0, 1, 0));
 	activeCamera->lookAt(Player.get_position());
-	//mesh.rotate(theta, glm::vec3(0, 1, 0));
-	//mesh2.rotate(-theta, glm::vec3(0, 1, 0));
+	MovePlayer();
 }
 
 void onRender(WindowHandler & uim)
@@ -283,9 +344,7 @@ void onRender(WindowHandler & uim)
 	Player.render(activeCamera);
 	//mesh.render(activeCamera);
 	//mesh2.render(activeCamera);
-}
-
-
+}	
 
 void onHover(sf::Vector2i cPos)
 {
@@ -301,6 +360,7 @@ void onEvent(WindowHandler &uim, sf::Event ev)
 		switch (ev.key.code)
 		{
 		case sf::Keyboard::W:
+		case sf::Keyboard::Up:
 			MovePlayerUp();
 			break;
 		case sf::Keyboard::S:
