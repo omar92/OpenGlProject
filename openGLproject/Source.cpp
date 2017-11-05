@@ -317,7 +317,7 @@ int main()
 	window->onHover = onHover;
 	window->onRender = onRender;
 	window->onEvent = onEvent;
-	shader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl");
+	shader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl", "./res/block.png");
 	//shader->use();
 	window->startDisplay();
 }	

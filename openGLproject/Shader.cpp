@@ -62,7 +62,7 @@ GLuint Shader::makeShaderProgram(GLuint vertShaderID, GLuint fragShaderID)
 	return shaderID;
 }
 
-GLuint Shader::InitShader(const char * vertex_shader_file_name, const char * fragment_shader_file_name)
+GLuint Shader::InitShader(const char * vertex_shader_file_name, const char * fragment_shader_file_name, const char * texture_file_name)
 {
 	GLuint shaderProgramID = -1;
 	GLuint vertexShaderID = -1;
@@ -85,9 +85,13 @@ GLuint Shader::InitShader(const char * vertex_shader_file_name, const char * fra
 
 
 	sf::Image image;
-	if (!image.loadFromFile("E:\\earth.png"))
+	if (!image.loadFromFile(texture_file_name))
 	{
 		std::cout << "error loading image!" << std::endl;
+		if (!image.loadFromFile("defult.png"))
+		{
+			std::cout << "error loading image!" << std::endl;
+		}
 	}
 
 	GLuint textureID;
@@ -127,9 +131,9 @@ Shader::Shader(GLuint shaderProgramID)
 	Shader_program_id = shaderProgramID;
 	//InitShader(vertex_Shader_filename, fragment_Shader_filename);
 }
-std::shared_ptr<Shader> Shader::LoadFromFile(const char * vertex_Shader_filename, const char * fragment_Shader_filename)
+std::shared_ptr<Shader> Shader::LoadFromFile(const char * vertex_Shader_filename, const char * fragment_Shader_filename, const char * texture_file_name)
 {
-	GLuint Shader_program_id = InitShader(vertex_Shader_filename, fragment_Shader_filename);
+	GLuint Shader_program_id = InitShader(vertex_Shader_filename, fragment_Shader_filename, texture_file_name);
 	if (Shader_program_id != -1) {
 		std::shared_ptr<Shader> sPtr = std::shared_ptr<Shader>(new Shader(Shader_program_id));
 		return sPtr;
