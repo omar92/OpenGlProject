@@ -4,6 +4,7 @@
 #include<fstream>
 #include<iostream>
 #include<memory>
+#include <SFML/Graphics.hpp>
 
 class Shader
 {

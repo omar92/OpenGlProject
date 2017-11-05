@@ -2,6 +2,7 @@
 
 in vec3 vertex_position;
 in vec3 vertex_normal;
+in vec2 vertex_uv;
 
 uniform mat4 modelMat;
 uniform mat4 viewMat;
@@ -17,6 +18,8 @@ vec3 light_color=vec3(1,1,1);
 vec3 camPos=vec3(0,0,3);
 
 out vec3 color;
+out vec2 frag_uv;
+out vec3 light;
 void main()
 {	
 	//position
@@ -34,6 +37,8 @@ void main()
 	kd*max(dot(l,norm),0)*light_color+
 	ks*max(pow(dot(h,norm),shineness),0)*vec3(1,1,1);
 
-	color=material_color*lightInt;
+	light=lightInt;
+	color=material_color;
+	frag_uv=vertex_uv;
 }
 

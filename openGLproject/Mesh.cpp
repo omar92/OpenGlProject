@@ -44,30 +44,33 @@ void Mesh::render(glm::mat4 view_mat, glm::mat4 proj_mat, glm::vec3 cam_pos)
 	}
 	glUniformMatrix4fv(shader->get_uniform_loc("modelMat"), 1, GL_FALSE, glm::value_ptr(model_mat));
 
-	//draw
-	shader->use();
+
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 	GLuint material_color_location = shader->get_uniform_loc("material_color");
-	glUniform3f (material_color_location,color.x,color.y,color.z);
+	glUniform3f(material_color_location, color.x, color.y, color.z);
+
 
 	GLuint vertex_position_location = shader->get_attr_loc("vertex_position");
-	glVertexAttribPointer(vertex_position_location, 3, GL_FLOAT, false, 6 * sizeof(float), 0);
+	glVertexAttribPointer(vertex_position_location, 3, GL_FLOAT, false, sizeof(vertex), 0);
 	glEnableVertexAttribArray(vertex_position_location);
+
 	GLuint vertex_normal_location = shader->get_attr_loc("vertex_normal");
-	glVertexAttribPointer(vertex_normal_location, 3, GL_FLOAT, false, 6 * sizeof(float), (char*)(3 * sizeof(float)));
+	glVertexAttribPointer(vertex_normal_location, 3, GL_FLOAT, false, sizeof(vertex), (char*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(vertex_normal_location);
 
+	GLuint vertex_uv_location = shader->get_attr_loc("vertex_uv");
+	glVertexAttribPointer(vertex_uv_location, 2, GL_FLOAT, false, sizeof(vertex), (char*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(vertex_uv_location);
 
+	//draw
+	shader->use();
 	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, NULL);
 	unBindBuffers();
 }
 
-void Mesh::render(Camera * activeCamera)
-{
-	render(activeCamera->get_view(), activeCamera->get_proj(), activeCamera->get_position());
-}
+
 
 
 void Mesh::update_model_mat()
@@ -89,42 +92,52 @@ void Mesh::unBindBuffers()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, -1);
 }
 
-void Mesh::CreateTriangle(glm::vec3 p[3], glm::vec3 normals[3], std::vector<vertex>& vertices, std::vector<GLuint>& indices) {
+void Mesh::CreateTriangle(glm::vec3 p[3], glm::vec3 normals[3], glm::vec2 uv[3],  std::vector<vertex>& vertices, std::vector<GLuint>& indices) {
 	for (int pointI = 0; pointI < 3; pointI++)
 	{
 		int index = -1;
 		for (int i = 0; i < vertices.size(); i++)
 		{
-			if (vertices[i].position == p[pointI] && vertices[i].normal == normals[pointI]) {
+			if (vertices[i].position == p[pointI] && vertices[i].normal == normals[pointI] && vertices[i].uv == uv[pointI]) {
 				index = i;
 			}
 		}
 
 		if (index < 0) {
-			vertices.push_back({ glm::vec3(p[pointI]),normals[pointI] });
+			vertices.push_back({ glm::vec3(p[pointI]),normals[pointI],uv[pointI] });
 			index = vertices.size() - 1;
 		}
 		indices.push_back(index);
 	}
 }
 
-void Mesh::CreateQuad(glm::vec3 p[4], glm::vec3 color, std::vector<vertex>& vertices, std::vector<GLuint>& indices) {
+void Mesh::CreateQuad(glm::vec3 p[4], std::vector<vertex>& vertices, std::vector<GLuint>& indices) {
+	glm::vec2 quadUv[] = {
+		glm::vec2(0,0), 
+		glm::vec2(0,1),
+		glm::vec2(1,0),
+		glm::vec2(0,0),
+		glm::vec2(1,0),
+		glm::vec2(1,1),
+	};
+	
 	glm::vec3 t1Points[] = { p[0],p[1],p[2] };
 	glm::vec3 normal = glm::cross((p[2] - p[1]), (p[0] - p[1]));
 	glm::vec3 t1Normals[] = { normal,normal,normal };
-	CreateTriangle(t1Points, t1Normals, vertices, indices );
+	CreateTriangle(t1Points, t1Normals, quadUv, vertices, indices);
 
 	glm::vec3 t2Points[] = { p[0],p[2],p[3] };
 	normal = glm::cross((p[3] - p[2]), (p[0] - p[2]));
 	glm::vec3 t2Normals[] = { normal,normal,normal };
-	CreateTriangle(t2Points, t2Normals, vertices, indices);
+	CreateTriangle(t2Points, t2Normals, quadUv, vertices, indices);
 }
 
 Mesh Mesh::create_cube(std::shared_ptr<Shader> _shader) {
+
 	auto vertices = std::shared_ptr<std::vector<vertex>>(new std::vector<vertex>());
 	auto indices = std::shared_ptr<std::vector<GLuint>>(new std::vector<GLuint>());
 
-	glm::vec3 cubeP[8] = 
+	glm::vec3 cubeP[8] =
 	{
 		glm::vec3(-0.5f,0.5f,0.5f),
 		glm::vec3(-0.5f,-0.5f,0.5f),
@@ -136,22 +149,22 @@ Mesh Mesh::create_cube(std::shared_ptr<Shader> _shader) {
 		glm::vec3(-0.5f,0.5f,-0.5f),
 	};
 	glm::vec3 front[] = { cubeP[0],cubeP[1],cubeP[2],cubeP[3] };
-	CreateQuad(front, glm::vec3(0, 0, 0), *vertices, *indices);
+	CreateQuad(front,  *vertices, *indices);
 
 	glm::vec3 right[] = { cubeP[3],cubeP[2],cubeP[5],cubeP[4] };
-	CreateQuad(right, glm::vec3(0, 0, 1), *vertices, *indices);
+	CreateQuad(right, *vertices, *indices);
 
 	glm::vec3 back[] = { cubeP[4],cubeP[5],cubeP[6],cubeP[7] };
-	CreateQuad(back, glm::vec3(0, 1, 0), *vertices, *indices);
+	CreateQuad(back, *vertices, *indices);
 
 	glm::vec3 left[] = { cubeP[7],cubeP[6],cubeP[1],cubeP[0] };
-	CreateQuad(left, glm::vec3(0, 1, 1), *vertices, *indices);
+	CreateQuad(left, *vertices, *indices);
 
 	glm::vec3 top[] = { cubeP[7],cubeP[0],cubeP[3],cubeP[4] };
-	CreateQuad(top, glm::vec3(1, 0, 0), *vertices, *indices);
+	CreateQuad(top,  *vertices, *indices);
 
 	glm::vec3 bottom[] = { cubeP[2],cubeP[1],cubeP[6],cubeP[5] };
-	CreateQuad(bottom, glm::vec3(1, 0, 1), *vertices, *indices);
+	CreateQuad(bottom,  *vertices, *indices);
 
 	return Mesh(vertices, indices, _shader);
 }
@@ -179,7 +192,12 @@ void Mesh::divideTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c, int iter, std::
 			glm::vec3(b.x,b.y,b.z),
 			glm::vec3(c.x,c.y,c.z),
 		};
-		CreateTriangle(tPoints, tPoints, _vertices, _indices);
+		glm::vec2 tuv[] = {
+			calcUV(a),
+			calcUV(b),
+			calcUV(c),
+		};
+		CreateTriangle(tPoints, tPoints, tuv, _vertices, _indices);
 	}
 }
 

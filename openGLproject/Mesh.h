@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Shader.h"
 
+
 class Mesh
 {
 private:
@@ -35,9 +36,19 @@ private:
 
 	void unBindBuffers();
 
-	static void Mesh::CreateTriangle(glm::vec3 p[3], glm::vec3 normals[3], std::vector<vertex>& vertices, std::vector<GLuint>& indices);
-	static void CreateQuad(glm::vec3 p[4], glm::vec3 color, std::vector<vertex> &coreVertices, std::vector<GLuint> &indices);
+	static void Mesh::CreateTriangle(glm::vec3 p[3], glm::vec3 normals[3], glm::vec2 uv[3], std::vector<vertex>& vertices, std::vector<GLuint>& indices);
+	static void CreateQuad(glm::vec3 p[4], std::vector<vertex> &coreVertices, std::vector<GLuint> &indices);
 	static void Mesh::divideTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c, int iter, std::vector<vertex>& vertices, std::vector<GLuint>& indices);
+	static glm::vec2 calcUV(glm::vec3 position)
+	{
+		float r = sqrt(position.x*position.x + position.y*position.y + position.z*position.z);
+		float theta = atan2(position.x, position.z);
+		float phi = acos(position.y / r);
+		glm::vec2 uv((theta + 3.1415) / (2 * 3.1415), phi / 3.1415);
+		return uv;
+	}
+
+
 public:
 	Mesh() {};
 	Mesh(std::shared_ptr<std::vector<vertex>> vertices, std::shared_ptr<std::vector<GLuint>> indices, std::shared_ptr<Shader> shader);
@@ -46,8 +57,13 @@ public:
 	static Mesh create_cube(std::shared_ptr< Shader> _shader);
 	static Mesh create_sphere(std::shared_ptr< Shader> _shader,int iterations=3);
 
-	void render(Camera *activeCamera);
+
+
 	void render(glm::mat4 view_mat, glm::mat4 proj_mat, glm::vec3 cam_pos);
+	void render(Camera * activeCamera)
+	{
+		render(activeCamera->get_view(), activeCamera->get_proj(), activeCamera->get_position());
+	}
 
 	void translate(float tx, float ty, float tz)
 	{

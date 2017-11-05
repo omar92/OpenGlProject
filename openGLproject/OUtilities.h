@@ -13,8 +13,10 @@ struct vertex
 {
 	glm::vec3 position;
 	glm::vec3 normal;
-	vertex() :position(), normal() {};
-	vertex(glm::vec3 pos, glm::vec3 norm) :position(pos), normal(norm) {};
+	glm::vec2 uv;
+	vertex() :position(), normal(), uv() {}
+	vertex(glm::vec3 pos, glm::vec3 norm) :position(pos), normal(norm) {}
+	vertex(glm::vec3 pos, glm::vec3 norm, glm::vec2 _uv) :position(pos), normal(norm), uv(_uv) {}
 };
 
 //void Log(char * text) {
