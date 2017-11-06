@@ -23,8 +23,10 @@ out vec3 light;
 void main()
 {	
 	//position
-	gl_Position=projMat*viewMat*modelMat*vec4(vertex_position,1);
 
+	vec4 pos=projMat*viewMat*modelMat*vec4(vertex_position,1);
+	pos.y +=sin(pos.z);
+	gl_Position = pos;
 	//lighting
 	vec3 norm=normalize(modelMat*vec4(vertex_normal,0)).xyz;
 	
