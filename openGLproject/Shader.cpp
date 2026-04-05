@@ -13,11 +13,12 @@ char * Shader::readFile(const char * fileName)
 		return NULL;
 	}
 	std::streampos size = shaderfile.tellg();
-	char* filedata = new char[size];
-	for (int i = 0; i < size; i++)
+	char* filedata = new char[(size_t)size + 1];
+	for (int i = 0; i < (size_t)size + 1; i++)
 		filedata[i] = 0;
 	shaderfile.seekg(std::ios::beg);
 	shaderfile.read(filedata, size);
+	filedata[(size_t)size] = '\0'; // Ensure null-termination
 	shaderfile.close();
 	return filedata;
 }

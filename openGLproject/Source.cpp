@@ -314,16 +314,21 @@ void MovePlayer()
 
 int main()
 {
+	std::cout << "Starting main..." << std::endl;
 	auto window = WindowHandler::createWindow(sf::Vector2i(SCREEN_WIDTH, SCREEN_Height));
+	std::cout << "Window created." << std::endl;
 	window->onStart = onStart;
 	window->onUpdate = onUpdate;
 	window->onHover = onHover;
 	window->onRender = onRender;
 	window->onEvent = onEvent;
+	std::cout << "Loading blockShader..." << std::endl;
 	blockShader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl", "./res/block.png");
+	std::cout << "Loading playerShader..." << std::endl;
 	playerShader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl", "./res/player.png");
+	std::cout << "Loading goalShader..." << std::endl;
 	goalShader = Shader::LoadFromFile("texture_vs.glsl", "texture_fs.glsl", "./res/block.png");
-	//shader->use();
+	std::cout << "Starting Display loop..." << std::endl;
 	window->startDisplay();
 }	
 

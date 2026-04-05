@@ -1,0 +1,2 @@
+Attempting to load texture: ./res/block.png
+Attempting to load texture: ./res/block.png
