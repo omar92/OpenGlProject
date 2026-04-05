@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-#include<gl\glew\glew.h>
+#include<GL/glew.h>
 #include<fstream>
 #include<iostream>
 #include<memory>

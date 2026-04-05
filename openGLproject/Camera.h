@@ -1,6 +1,6 @@
 #pragma once
-#include <gl\glm\glm.hpp>
-#include<gl\glm\gtx\transform.hpp>
+#include <glm/glm.hpp>
+#include<glm/gtx/transform.hpp>
 
 
 enum class PROJECTION_TYPE

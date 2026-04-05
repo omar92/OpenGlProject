@@ -5,7 +5,7 @@
 #pragma comment(lib,"opengl32.lib" )
 #pragma comment(lib,"glew32.lib")
 
-#include<gl\glew\glew.h>
+#include<GL/glew.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include <iostream>

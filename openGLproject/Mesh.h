@@ -1,7 +1,7 @@
 #pragma once
-#include<gl\glew\glew.h>
-#include<gl\glm\gtc\type_ptr.hpp>
-#include<gl\glm\gtx\transform.hpp>
+#include<GL/glew.h>
+#include<glm/gtc/type_ptr.hpp>
+#include<glm/gtx/transform.hpp>
 
 #include<memory>
 #include <vector>
@@ -94,7 +94,7 @@ public:
 	{
 		return scale;
 	}
-	void rotate(glm::float_t angle, glm::vec3 _direction)
+	void rotate(float angle, glm::vec3 _direction)
 	{
 		if (_direction.x + _direction.y + _direction.z != 0) {
 			rotation.x = _direction.x;

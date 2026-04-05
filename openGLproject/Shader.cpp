@@ -1,4 +1,6 @@
 #include "Shader.h"
+#include <fstream>
+#include <filesystem>
 
 Shader::~Shader()
 {
@@ -114,30 +116,31 @@ Shader::Shader(GLuint shaderProgramID, GLuint _textureID)
 }
 std::shared_ptr<Shader> Shader::LoadFromFile(const char * vertex_Shader_filename, const char * fragment_Shader_filename, const char * texture_file_name)
 {
-	GLuint Shader_program_id = InitShader(vertex_Shader_filename, fragment_Shader_filename, texture_file_name);
-	if (Shader_program_id != -1) {
-
-		sf::Image image;
-		if (!image.loadFromFile(texture_file_name))
-		{
-			std::cout << "error loading image!" << std::endl;
-			if (!image.loadFromFile("defult.png"))
-			{
-				std::cout << "error loading image!" << std::endl;
-			}
-		}
-		GLuint textureID;
-		glGenTextures(1, &textureID);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		std::shared_ptr<Shader> sPtr = std::shared_ptr<Shader>(new Shader(Shader_program_id, textureID));
-		return sPtr;
-	}
-	else {
-		return nullptr;
-	}
+    std::ofstream log("log.txt", std::ios::app);
+    log << "CWD: " << std::filesystem::current_path() << std::endl;
+    log << "Attempting to load texture: " << texture_file_name << std::endl;
+    GLuint Shader_program_id = InitShader(vertex_Shader_filename, fragment_Shader_filename, texture_file_name);
+    if (Shader_program_id != -1) {
+        sf::Image image;
+        if (!image.loadFromFile(texture_file_name))
+        {
+            log << "error loading image! Path attempted: " << texture_file_name << std::endl;
+        }
+        log.close();
+        GLuint textureID;
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        std::shared_ptr<Shader> sPtr = std::shared_ptr<Shader>(new Shader(Shader_program_id, textureID));
+        return sPtr;
+    }
+    else {
+        log << "Shader program creation failed." << std::endl;
+        log.close();
+        return nullptr;
+    }
 }

@@ -1,7 +1,7 @@
 #pragma once
-#include<gl\glew\glew.h>
-#include<gl\glm\gtc\type_ptr.hpp>
-#include<gl\glm\gtx\transform.hpp>
+#include<GL/glew.h>
+#include<glm/gtc/type_ptr.hpp>
+#include<glm/gtx/transform.hpp>
 //struct vertex
 //{
 //	sf::Vector3f position;
